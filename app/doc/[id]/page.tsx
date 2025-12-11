@@ -23,13 +23,6 @@ const DocumentEditionPage = ({ params }: PageParams) => {
         select(id)
     }, [id])
 
-    useEffect(() => {
-        if (selectedDocument) {
-            console.log(selectedDocument.id)
-            console.log(selectedDocument.title)
-        }
-    }, [selectedDocument])
-
     if (!selectedDocument) {
         return (
             <div className="p-6 max-w-xl mx-auto">

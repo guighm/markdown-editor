@@ -3,12 +3,13 @@ import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const HomeButton = () => {
+
     return (
         <div className="absolute top-7 left-16 flex gap-2.5">
             <Tooltip>
                 <TooltipTrigger>
                     <Link href={"/"}>
-                        <Home className="w-6 h-6"/>
+                        <Home className="w-6 h-6" />
                     </Link>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -17,6 +18,7 @@ const HomeButton = () => {
             </Tooltip>
         </div>
     )
+
 }
 
 export default HomeButton;
