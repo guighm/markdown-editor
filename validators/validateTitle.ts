@@ -7,7 +7,7 @@ export const validateTitle = (title: string) => {
 
     const forbidden = /[\/\\:*?"<>|]/;
     if (forbidden.test(title)) {
-        errors.push("O título contém caracteres inválidos!")
+        errors.push(`O título contém caracteres inválidos -> ${[...new Set(title.match(forbidden))].join(", ")}`)
     }
 
     if (title.length > 100) {
@@ -19,5 +19,4 @@ export const validateTitle = (title: string) => {
     }
 
     return errors;
-
 }

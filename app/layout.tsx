@@ -20,7 +20,7 @@ const Layout = ({ children }: LayoutProps) => {
       <body>
         <ThemeProvider
           attribute={"class"}
-          defaultTheme={"light"}
+          defaultTheme={"system"}
           enableSystem
           disableTransitionOnChange
         >

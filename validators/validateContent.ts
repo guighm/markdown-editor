@@ -6,5 +6,4 @@ export const validateContent = (content: string) => {
     }
 
     return errors;
-
 }

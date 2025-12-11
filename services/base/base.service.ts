@@ -1,7 +1,5 @@
 interface IdentifiableProps {
     id: string;
-    updatedAt: string;
-    title: string;
 }
 
 export const baseService = <Entity extends IdentifiableProps>(storageKey: string) => {
