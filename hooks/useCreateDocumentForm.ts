@@ -26,7 +26,6 @@ const useCreateDocumentForm = () => {
                 status: FormStatus.ERROR,
                 message: errors[0]
             }
-
         } else {
             const newDocument: DocumentDto = {
                 id: crypto.randomUUID(),
