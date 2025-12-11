@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 const useDate = (iso: string) => {
+
     const date = useMemo(() => {
         const d: Date = new Date(iso)
         return {
@@ -11,6 +12,7 @@ const useDate = (iso: string) => {
             minute: String(d.getMinutes()).padStart(2, "0")
         }
     }, [iso])
+
     return date
 }
 

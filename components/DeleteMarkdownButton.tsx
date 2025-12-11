@@ -5,8 +5,10 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const DeleteMarkdownButton = ({ id }: { id: string }) => {
+
     const [open, setOpen] = useState<boolean>(false)
     const { remove } = useDocuments()
+    
     return (
         <div>
             <Tooltip>

@@ -1,9 +1,9 @@
 import useDate from "@/hooks/useDate";
+import { DocumentDto } from "@/types/entities/document.entity";
 import DeleteMarkdownButton from "./DeleteMarkdownButton";
 import EditMarkdownButton from "./EditMarkdownButton";
 import SmartInput from "./SmartInput";
 import { TableCell, TableRow } from "./ui/table";
-import { DocumentDto } from "@/types/entities/document.entity";
 
 interface Props {
     document: DocumentDto;
@@ -18,7 +18,7 @@ const DocumentsListItem = ({ document }: Props) => {
             <TableCell>
                 <SmartInput initialValue={document.title} id={document.id} />
             </TableCell>
-            <TableCell className="">{updatedAt}</TableCell>
+            <TableCell>{updatedAt}</TableCell>
             <TableCell>
                 <div className="flex justify-center items-center">
                     <EditMarkdownButton id={document.id} />
