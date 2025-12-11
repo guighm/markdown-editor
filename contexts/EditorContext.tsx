@@ -11,10 +11,13 @@ interface ProviderProps {
 }
 
 const EditorProvider = ({ children }: ProviderProps) => {
+
+    const value: ContextProps = {
+        textAreaRef: useRef<HTMLTextAreaElement>(null)
+    }
+
     return (
-        <EditorContext value={{
-            textAreaRef: useRef<HTMLTextAreaElement>(null)
-        }}>
+        <EditorContext value={value}>
             {children}
         </EditorContext>
     )
@@ -28,4 +31,4 @@ const useEditor = () => {
     return editor
 }
 
-export { EditorProvider, useEditor }
+export { EditorProvider, useEditor };
