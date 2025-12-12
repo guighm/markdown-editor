@@ -1,9 +1,10 @@
 import { useDocuments } from "@/contexts/DocumentsContext";
+import { useEditor } from "@/contexts/EditorContext";
+import useMarkdownEditor from "@/hooks/useMarkdownEditor";
 import { CircleCheck, CircleX, Loader } from "lucide-react";
 import EditorToolbar from "./EditorToolbar";
 import { Textarea } from "./ui/textarea";
-import useMarkdownEditor from "@/hooks/useMarkdownEditor";
-import { useEditor } from "@/contexts/EditorContext";
+import { useEffect } from "react";
 
 const Editor = () => {
 
@@ -23,7 +24,11 @@ const Editor = () => {
         inputValue,
         setInputValue,
         handleKeyDown
-    } = useMarkdownEditor({ selectedDocument: selectedDocument })
+    } = useMarkdownEditor()
+
+    useEffect(() => {
+        setInputValue(selectedDocument.content)
+    }, [selectedDocument.id]) 
 
     return (
         <div className="w-1/2 flex flex-col justify-center items-center">

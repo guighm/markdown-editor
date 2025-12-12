@@ -52,7 +52,7 @@ const useInputManager = ({ key, id, initialValue, validator }: Props) => {
             }
         }
         handle()
-    }, [debouncedValue, key])
+    }, [debouncedValue, inputValue])
 
     return {
         saveStatus,

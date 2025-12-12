@@ -8,6 +8,7 @@ interface ContextProps {
     documentsList: DocumentDto[];
     selectedDocument: DocumentDto | undefined;
     select: (id: string) => void;
+    clearSelection: () => void;
     create: (doc: DocumentDto) => DocumentDto;
     update: (id: string, doc: Partial<DocumentDto>) => DocumentDto;
     remove: (id: string) => boolean;
@@ -53,6 +54,10 @@ const DocumentsProvider = ({ children }: ProviderProps) => {
         return removed
     }
 
+    const clearSelection = () => {
+        setSelectedDocument(undefined)
+    }
+
     useEffect(() => {
         fetchDocuments()
     }, [])
@@ -63,7 +68,8 @@ const DocumentsProvider = ({ children }: ProviderProps) => {
         select: select,
         create: create,
         update: update,
-        remove: remove
+        remove: remove,
+        clearSelection: clearSelection
     }
 
     return (

@@ -17,11 +17,15 @@ interface PageParams {
 
 const DocumentEditionPage = ({ params }: PageParams) => {
     const { id } = use(params)
-    const { select, selectedDocument } = useDocuments()
+    const { select, selectedDocument, clearSelection } = useDocuments()
 
     useEffect(() => {
         select(id)
     }, [id])
+
+    useEffect(() => {
+        return () => clearSelection()
+    }, [])
 
     if (!selectedDocument) {
         return (

@@ -1,10 +1,16 @@
 import { useEditor } from "@/contexts/EditorContext"
-import { DocumentDto } from "@/types/entities/document.entity"
 import { validateContent } from "@/validators/validateContent"
 import useInputManager from "./useInputManager"
+import { useDocuments } from "@/contexts/DocumentsContext"
 
-const useMarkdownEditor = ({ selectedDocument }: { selectedDocument: DocumentDto }) => {
+const useMarkdownEditor = () => {
+
     const { textAreaRef } = useEditor()
+    const { selectedDocument } = useDocuments()
+
+    if (!selectedDocument) {
+        throw new Error("Nenhum documento selecionado.")
+    }
 
     const { inputValue, setInputValue, saveStatus } = useInputManager({
         key: "content",
