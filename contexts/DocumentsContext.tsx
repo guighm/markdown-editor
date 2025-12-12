@@ -2,7 +2,7 @@
 
 import { documentService } from "@/services/document.service";
 import { DocumentDto } from "@/types/entities/document.entity";
-import { createContext, ReactNode, use, useEffect, useState } from "react";
+import { createContext, ReactNode, use, useCallback, useEffect, useState } from "react";
 
 interface ContextProps {
     documentsList: DocumentDto[];
@@ -24,16 +24,16 @@ const DocumentsProvider = ({ children }: ProviderProps) => {
     const [documentsList, setDocumentsList] = useState<DocumentDto[]>([])
     const [selectedDocument, setSelectedDocument] = useState<DocumentDto | undefined>(undefined)
 
-    const select = (id: string) => {
+    const select = useCallback((id: string) => {
         const document = documentService.findOne(id)
         if (document) setSelectedDocument(document)
-    }
+    }, [])
 
-    const fetchDocuments = () => {
+    const fetchDocuments = useCallback(() => {
         const documents = documentService.findAll()
         const sorted = documents.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
         setDocumentsList(sorted)
-    }
+    }, [])
 
     const create = (document: DocumentDto): DocumentDto => {
         const created = documentService.create(document)
@@ -41,12 +41,12 @@ const DocumentsProvider = ({ children }: ProviderProps) => {
         return created
     }
 
-    const update = (id: string, document: Partial<DocumentDto>): DocumentDto => {
+    const update = useCallback((id: string, document: Partial<DocumentDto>): DocumentDto => {
         const updated = documentService.update(id, document)
         fetchDocuments()
         select(updated.id)
         return updated
-    }
+    }, [fetchDocuments, select])
 
     const remove = (id: string): boolean => {
         const removed = documentService.remove(id)
@@ -54,13 +54,16 @@ const DocumentsProvider = ({ children }: ProviderProps) => {
         return removed
     }
 
-    const clearSelection = () => {
+    const clearSelection = useCallback(() => {
         setSelectedDocument(undefined)
-    }
+    }, [])
 
     useEffect(() => {
-        fetchDocuments()
-    }, [])
+        const fetch = () => {
+            fetchDocuments()
+        }
+        fetch()
+    }, [fetchDocuments])
 
     const value: ContextProps = {
         documentsList: documentsList,

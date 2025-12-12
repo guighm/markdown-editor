@@ -4,12 +4,19 @@ import useMarkdownEditor from "@/hooks/useMarkdownEditor";
 import { CircleCheck, CircleX, Loader } from "lucide-react";
 import EditorToolbar from "./EditorToolbar";
 import { Textarea } from "./ui/textarea";
-import { useEffect } from "react";
 
 const Editor = () => {
 
     const { selectedDocument } = useDocuments()
     const { textAreaRef } = useEditor()
+
+    const {
+        saveStatus,
+        inputValue,
+        setInputValue,
+        handleKeyDown,
+        handleTool
+    } = useMarkdownEditor()
 
     if (!selectedDocument) {
         return (
@@ -19,24 +26,17 @@ const Editor = () => {
         )
     }
 
-    const {
-        saveStatus,
-        inputValue,
-        setInputValue,
-        handleKeyDown
-    } = useMarkdownEditor()
-
-    useEffect(() => {
-        setInputValue(selectedDocument.content)
-    }, [selectedDocument.id]) 
-
     return (
         <div className="w-1/2 flex flex-col justify-center items-center">
             <h2 className="font-bold ml-3 mb-2.5">Editor</h2>
-            <EditorToolbar />
-            {saveStatus === "saving" && <Loader className="text-gray-500 mt-5" />}
-            {saveStatus === "saved" && <CircleCheck className="text-green-600 mt-5" />}
-            {saveStatus === "error" && <CircleX className="text-red-600 mt-5" />}
+            <div className="flex gap-5">
+                <EditorToolbar handleTool={handleTool} />
+                <div className="absolute left-44 top-32">
+                    {saveStatus === "saving" && <Loader className="text-gray-500 mt-5" />}
+                    {saveStatus === "saved" && <CircleCheck className="text-green-600 mt-5" />}
+                    {saveStatus === "error" && <CircleX className="text-red-600 mt-5" />}
+                </div>
+            </div>
             <Textarea
                 ref={textAreaRef}
                 value={inputValue}

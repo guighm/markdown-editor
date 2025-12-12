@@ -55,7 +55,7 @@ const useCreateDocumentForm = () => {
             }
         }
         openEditor()
-    }, [state, createdDocument])
+    }, [state, createdDocument, router])
 
     return {
         open,

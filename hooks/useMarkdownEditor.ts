@@ -1,7 +1,7 @@
+import { useDocuments } from "@/contexts/DocumentsContext"
 import { useEditor } from "@/contexts/EditorContext"
 import { validateContent } from "@/validators/validateContent"
 import useInputManager from "./useInputManager"
-import { useDocuments } from "@/contexts/DocumentsContext"
 
 const useMarkdownEditor = () => {
 
@@ -19,120 +19,141 @@ const useMarkdownEditor = () => {
         validator: validateContent
     })
 
-    const applyFormat = (before: string, after: string) => {
-        const textarea = textAreaRef.current
-        if (!textarea) return
-
-        const start = textarea.selectionStart
-        const end = textarea.selectionEnd
-
-        const selectedLines = textarea.value.substring(start, end).split("\n")
-        const formattedLines: string[] = []
-
-        for (const line of selectedLines) {
-            if (line.length !== 0) {
-                const formattedLine = line.trim().replace(before, "").replace(after, "")
-                formattedLines.push(`${before}${formattedLine}${after}`)
-            } else {
-                formattedLines.push(line)
-            }
-        }
-
-        const formattedSelection = formattedLines.join("\n")
-
-        textarea.value = (
-            textarea.value.substring(0, start)
-            +
-            formattedSelection
-            +
-            textarea.value.substring(end)
-        )
-
-        setInputValue(textarea.value)
+    const wrapSelection = (prefix: string, suffix: string) => {
+        const textarea = textAreaRef ? textAreaRef.current : null;
+        if (!textarea) return;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selectedText = inputValue.slice(start, end) || "";
+        const before = inputValue.slice(0, start);
+        const after = inputValue.slice(end);
+        const newValue = before + prefix + selectedText + suffix + after;
+        setInputValue(newValue);
+        requestAnimationFrame(() => {
+            const cursorPosition = start + prefix.length + selectedText.length + suffix.length;
+            textarea.focus();
+            textarea.setSelectionRange(cursorPosition, cursorPosition);
+        });
     }
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        const keyCombo = `${e.ctrlKey ? "ctrl+" : ""}${e.key}`
+    const prefixLines = (prefix: string) => {
+        const textarea = textAreaRef ? textAreaRef.current : null;
+        if (!textarea) return;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const before = inputValue.slice(0, start);
+        const selectedText = inputValue.slice(start, end) || "";
+        const after = inputValue.slice(end);
+        const lines = selectedText.split('\n');
+        const prefixedLines = lines.map(line => prefix + line).join('\n');
+        const newValue = before + prefixedLines + after;
+        setInputValue(newValue);
+        requestAnimationFrame(() => {
+            const cursorEnd = start + prefixedLines.length;
+            textarea.focus();
+            textarea.setSelectionRange(start, cursorEnd);
+        });
+    }
 
-        switch (keyCombo) {
-            case "ctrl+1":
-                e.preventDefault()
-                applyFormat("# ", "")
-                break
-            case "ctrl+2":
-                e.preventDefault()
-                applyFormat("## ", "")
-                break
-            case "ctrl+3":
-                e.preventDefault()
-                applyFormat("### ", "")
-                break
-            case "ctrl+4":
-                e.preventDefault()
-                applyFormat("#### ", "")
-                break
-            case "ctrl+b":
-            case "ctrl+B":
-                e.preventDefault()
-                applyFormat("**", "**")
-                break
-            case "ctrl+i":
-            case "ctrl+I":
-                e.preventDefault()
-                applyFormat("*", "*")
-                break
-            case "ctrl+c":
-            case "ctrl+C":
-                e.preventDefault()
-                applyFormat("`", "`")
-                break
-            case "ctrl+l":
-            case "ctrl+L":
-                e.preventDefault()
-                applyFormat("- ", "")
-                break
-            default:
-                break
-        }
+    const insertHeading = (level: number) => {
+        const textarea = textAreaRef ? textAreaRef.current : null;
+        if (!textarea) return;
+        const start = textarea.selectionStart;
+        const lineStart = inputValue.lastIndexOf('\n', start - 1) + 1;
+        const before = inputValue.slice(0, lineStart);
+        const after = inputValue.slice(lineStart);
+        const hashes = "#".repeat(level)
+        const newValue = before + hashes + " " + after;
+        setInputValue(newValue);
+        requestAnimationFrame(() => {
+            const cursorPosition = lineStart + hashes.length + 1 + (start - lineStart);
+            textarea.focus();
+            textarea.setSelectionRange(cursorPosition, cursorPosition);
+        });
     }
 
     const handleTool = (tool: string) => {
         switch (tool) {
             case "h1":
-                applyFormat("# ", "")
-                break
+                insertHeading(1);
+                break;
             case "h2":
-                applyFormat("## ", "")
-                break
+                insertHeading(2);
+                break;
             case "h3":
-                applyFormat("### ", "")
-                break
+                insertHeading(3);
+                break;
             case "h4":
-                applyFormat("#### ", "")
-                break
+                insertHeading(4);
+                break;
             case "bold":
-                applyFormat("**", "**")
-                break
+                wrapSelection("**", "**");
+                break;
             case "italic":
-                applyFormat("*", "*")
-                break
-            case "code":
-                applyFormat("`", "`")
-                break
+                wrapSelection("*", "*");
+                break;
             case "list":
-                applyFormat("- ", "")
-                break
+                prefixLines("- ");
+                break;
+            case "code":
+                wrapSelection("`", "`");
+                break;
             default:
-                break
+                break;
         }
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+
+        const mod = e.ctrlKey;
+        if (!mod) return;
+        const key = String(e.key).toLowerCase();
+
+        switch (key) {
+            case "1":
+                e.preventDefault();
+                insertHeading(1);
+                break;
+            case "2":
+                e.preventDefault();
+                insertHeading(2);
+                break;
+            case "3":
+                e.preventDefault();
+                insertHeading(3);
+                break;
+            case "4":
+                e.preventDefault();
+                insertHeading(4);
+                break;
+            case "b":
+                e.preventDefault();
+                wrapSelection("**", "**");
+                break;
+            case "i":
+                e.preventDefault();
+                wrapSelection("*", "*");
+                break;
+            case "l":
+                e.preventDefault();
+                prefixLines("- ");
+                break;
+            case "e":
+                e.preventDefault();
+                wrapSelection("`", "`");
+                break;
+            default:
+                break;
+        }
+
     }
 
     return {
         saveStatus,
         inputValue,
         setInputValue,
-        handleKeyDown,
-        handleTool
+        handleTool,
+        handleKeyDown
     }
 }
 

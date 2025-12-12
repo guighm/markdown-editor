@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useDebounce from "./useDebounce";
 import { useDocuments } from "@/contexts/DocumentsContext";
 import { SaveStatus } from "@/types/save-status";
@@ -17,6 +17,7 @@ const useInputManager = ({ key, id, initialValue, validator }: Props) => {
     const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle")
     const debouncedValue = useDebounce<string>(inputValue)
     const { update } = useDocuments()
+    const memoizedValidator = useCallback((id: string) => validator(id), [validator])
 
     useEffect(() => {
         const changeStatus = () => {
@@ -33,7 +34,7 @@ const useInputManager = ({ key, id, initialValue, validator }: Props) => {
 
     useEffect(() => {
         const handle = () => {
-            const errors = validator(debouncedValue)
+            const errors = memoizedValidator(debouncedValue)
 
             if (errors.length > 0) {
                 toast.error(errors[0])
@@ -52,7 +53,7 @@ const useInputManager = ({ key, id, initialValue, validator }: Props) => {
             }
         }
         handle()
-    }, [debouncedValue, inputValue])
+    }, [debouncedValue, inputValue, update, memoizedValidator, id, key])
 
     return {
         saveStatus,

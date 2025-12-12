@@ -21,11 +21,11 @@ const DocumentEditionPage = ({ params }: PageParams) => {
 
     useEffect(() => {
         select(id)
-    }, [id])
+    }, [select, id])
 
     useEffect(() => {
         return () => clearSelection()
-    }, [])
+    }, [clearSelection])
 
     if (!selectedDocument) {
         return (
